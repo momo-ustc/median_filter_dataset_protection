@@ -107,59 +107,46 @@ train_images = (train_images / 255.0 - 0.5) / 0.5
 test_images = (test_images / 255.0 - 0.5) / 0.5
 
 # 构建新的数据集
-train_filtered_dataset = data.TensorDataset(torch.from_numpy(train_filtered_images).float(), torch.from_numpy(train_labels).long())
-test_filtered_dataset = data.TensorDataset(torch.from_numpy(test_filtered_images).float(), torch.from_numpy(test_labels).long())
-train_dataset = data.TensorDataset(torch.from_numpy(train_images).float(), torch.from_numpy(train_labels).long())
-test_dataset = data.TensorDataset(torch.from_numpy(test_images).float(), torch.from_numpy(test_labels).long())
+train_filtered_dataset = data.TensorDataset(torch.from_numpy(train_filtered_images).float().permute(0, 3, 1, 2), torch.from_numpy(train_labels).long())
+test_filtered_dataset = data.TensorDataset(torch.from_numpy(test_filtered_images).float().permute(0, 3, 1, 2), torch.from_numpy(test_labels).long())
+train_dataset = data.TensorDataset(torch.from_numpy(train_images).float().permute(0, 3, 1, 2), torch.from_numpy(train_labels).long())
+test_dataset = data.TensorDataset(torch.from_numpy(test_images).float().permute(0, 3, 1, 2), torch.from_numpy(test_labels).long())
 
 # 创建数据加载器
-train_filtered_loader = data.DataLoader(train_filtered_dataset, batch_size=batch_size, shuffle=True)
+train_filtered_loader = data.DataLoader(train_filtered_dataset, batch_size=batch_size, shuffle=False)
 test_filtered_loader = data.DataLoader(test_filtered_dataset, batch_size=batch_size, shuffle=False)
-train_loader = data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+train_loader = data.DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
 test_loader = data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-
 
 # 准备输入样本（例如，从测试集中获取）
 original_data = []
 watermarked_data = []
 original_test_data = []
 watermarked_test_data = []
-
+print("check1")
 # 获取原始数据集样本
+# 使用数据加载器迭代训练集，获取原始数据集样本的预测概率向量
 for images, labels in train_loader:
-    original_data.append(images)
+    original_probs = original_model(images)
 
-original_data = torch.cat(original_data, dim=0)
-
+# 使用数据加载器迭代测试集，获取原始数据集测试样本的预测概率向量
 for images, labels in test_loader:
-    original_test_data.append(images)
+    original_probs_test = original_model(images)
 
-original_test_data = torch.cat(original_test_data, dim=0)
-
-# 获取中值滤波水印数据集样本
+# 使用数据加载器迭代训练集，获取中值滤波水印数据集样本的预测概率向量
 for images, labels in train_filtered_loader:
-    watermarked_data.append(images)
+    watermarked_probs = median_filter_model(images)
 
-watermarked_data = torch.cat(watermarked_data, dim=0)
-
+# 使用数据加载器迭代测试集，获取中值滤波水印数据集测试样本的预测概率向量
 for images, labels in test_filtered_loader:
-    watermarked_test_data.append(images)
-
-watermarked_test_data = torch.cat(watermarked_test_data, dim=0)
-
-# 获取原始数据集样本的预测概率向量
-original_probs = original_model(original_data)
-original_probs_test = original_model(original_test_data)
-
-# 获取中值滤波水印数据集样本的预测概率向量
-watermarked_probs = median_filter_model(watermarked_data)
-watermarked_probs_test = median_filter_model(watermarked_test_data)
-
+    watermarked_probs_test = median_filter_model(images)
+print("check2")
 # 准备标签
 original_labels = torch.zeros(original_probs.size(0), dtype=torch.long)  # 原始数据集样本标签为0
 watermarked_labels = torch.ones(watermarked_probs.size(0), dtype=torch.long)  # 中值滤波水印数据集样本标签为1
 original_labels_test = torch.zeros(original_probs_test.size(0), dtype=torch.long)  # 原始数据集样本标签为0
 watermarked_labels_test = torch.ones(watermarked_probs_test.size(0), dtype=torch.long)  # 中值滤波水印数据集样本标签为1
+
 
 # 合并输入特征和标签
 features = torch.cat((original_probs, watermarked_probs), dim=0)

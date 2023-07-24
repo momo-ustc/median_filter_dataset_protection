@@ -54,10 +54,10 @@ test_images, test_labels = test_dataset.data, test_dataset.targets
 # plt.show()
 
 # 中值滤波处理训练集和测试集的图像数据
-train_filtered_images = median_filter(train_images)
-test_filtered_images = median_filter(test_images)
-# train_filtered_images = train_images
-# test_filtered_images = test_images
+# train_filtered_images = median_filter(train_images)
+# test_filtered_images = median_filter(test_images)
+train_filtered_images = train_images
+test_filtered_images = test_images
 
 train_filtered_images = np.array(train_filtered_images)
 test_filtered_images = np.array(test_filtered_images)
@@ -140,9 +140,14 @@ for epoch in range(num_epochs):
                   .format(epoch+1, num_epochs, i+1, total_step, loss.item()))
 
 # 保存模型
-save_path = 'E:/ustc/CIFAR/model_save/model_user_medianfiltering.ckpt'
+save_path = 'E:/ustc/CIFAR/model_save/model_user_ordinary.ckpt'
 torch.save(model.state_dict(), save_path)
 print("模型已保存，保存路径为:", save_path)
+
+# # 保存模型
+# save_path = 'E:/ustc/CIFAR/model_save/model_user_medianfiltering.ckpt'
+# torch.save(model.state_dict(), save_path)
+# print("模型已保存，保存路径为:", save_path)
 
 # 测试模型
 model.eval()
@@ -156,3 +161,96 @@ with torch.no_grad():
         correct += (predicted == labels).sum().item()
 
     print('测试集准确率: {:.2f}%'.format(100 * correct / total))
+
+# 创建一个空的列表来存储训练集数据的预测概率向量结果
+train_predictions_list = []
+
+# 设置模型为评估模式
+model.eval()
+
+# 不进行梯度计算
+with torch.no_grad():
+    for images, labels in train_loader:
+        outputs = model(images)
+        train_predictions_list.append(outputs)
+
+# 将训练集数据的预测概率向量结果转换为张量，并在每个预测概率向量后面添加标签0
+train_predictions_tensor = torch.cat(train_predictions_list, dim=0)
+
+# 现在，train_predictions_tensor 中存储了所有训练集数据的预测概率向量结果
+# 每一行对应一个数据样本的预测概率向量，最后一列为标签0
+
+# 保存训练集数据的预测概率向量结果
+torch.save(train_predictions_tensor, 'train_predictions_with_labels.pt')
+print("训练集数据的预测概率向量结果已保存。")
+
+
+# 创建一个空的列表来存储测试集数据的预测概率向量结果
+test_predictions_list = []
+
+# 设置模型为评估模式
+model.eval()
+
+# 不进行梯度计算
+with torch.no_grad():
+    for images, labels in test_loader:
+        outputs = model(images)
+        test_predictions_list.append(outputs)
+
+# 将测试集数据的预测概率向量结果转换为张量，并在每个预测概率向量后面添加标签0
+test_predictions_tensor = torch.cat(test_predictions_list, dim=0)
+
+# 现在，test_predictions_tensor 中存储了所有测试集数据的预测概率向量结果
+# 每一行对应一个数据样本的预测概率向量，最后一列为标签0
+
+# 保存测试集数据的预测概率向量结果
+torch.save(test_predictions_tensor, 'test_predictions_with_labels.pt')
+print("测试集数据的预测概率向量结果已保存。")
+
+
+
+
+# # 创建一个空的列表来存储训练集数据的预测概率向量结果
+# train_predictions_list = []
+
+# # 设置模型为评估模式
+# model.eval()
+
+# # 不进行梯度计算
+# with torch.no_grad():
+#     for images, labels in train_loader:
+#         outputs = model(images)
+#         train_predictions_list.append(outputs)
+
+# # 将训练集数据的预测概率向量结果转换为张量，并在每个预测概率向量后面添加标签0
+# train_predictions_tensor = torch.cat(train_predictions_list, dim=0)
+
+# # 现在，train_predictions_tensor 中存储了所有训练集数据的预测概率向量结果
+# # 每一行对应一个数据样本的预测概率向量，最后一列为标签0
+
+# # 保存训练集数据的预测概率向量结果
+# torch.save(train_predictions_tensor, 'train_predictions_with_labels_median_filter.pt')
+# print("训练集数据的预测概率向量结果已保存。")
+
+
+# # 创建一个空的列表来存储测试集数据的预测概率向量结果
+# test_predictions_list = []
+
+# # 设置模型为评估模式
+# model.eval()
+
+# # 不进行梯度计算
+# with torch.no_grad():
+#     for images, labels in test_loader:
+#         outputs = model(images)
+#         test_predictions_list.append(outputs)
+
+# # 将测试集数据的预测概率向量结果转换为张量，并在每个预测概率向量后面添加标签0
+# test_predictions_tensor = torch.cat(test_predictions_list, dim=0)
+
+# # 现在，test_predictions_tensor 中存储了所有测试集数据的预测概率向量结果
+# # 每一行对应一个数据样本的预测概率向量，最后一列为标签0
+
+# # 保存测试集数据的预测概率向量结果
+# torch.save(test_predictions_tensor, 'test_predictions_with_labels_median_filter.pt')
+# print("测试集数据的预测概率向量结果已保存。")
