@@ -1,0 +1,38 @@
+原始图像训练：
+Epoch [10/10], Step [1500/1563], Loss: 1.6434
+模型已保存，保存路径为: E:/ustc/CIFAR/model_save/model_user_ordinary.ckpt
+Files already downloaded and verified
+测试集准确率: 67.29%
+
+
+中值滤波后图像训练结果：
+Epoch [10/10], Step [1500/1563], Loss: 1.7270
+模型已保存，保存路径为: E:/ustc/CIFAR/model_save/model_user_medianfiltering.ckpt
+Files already downloaded and verified
+测试集准确率: 69.74%
+
+原始：
+batch_size = 32
+num_epochs = 10
+learning_rate = 0.001
+Epoch [10/10], Step [1500/1563], Loss: 2.0400
+模型已保存，保存路径为: E:/ustc/CIFAR/model_save/model_user_ordinary.ckpt
+测试集准确率: 45.74%
+Epoch [10/10], Step [1400/1563], Loss: 1.9752
+Epoch [10/10], Step [1500/1563], Loss: 1.9867
+模型已保存，保存路径为: E:/ustc/CIFAR/model_save/model_user_ordinary.ckpt
+测试集准确率: 46.85%
+
+水印：
+batch_size = 32
+num_epochs = 10
+learning_rate = 0.001
+Epoch [10/10], Step [1500/1563], Loss: 1.9885
+模型已保存，保存路径为: E:/ustc/CIFAR/model_save/model_user_medianfiltering.ckpt
+测试集准确率: 46.22%
+Epoch [10/10], Step [1400/1563], Loss: 1.9753
+Epoch [10/10], Step [1500/1563], Loss: 1.6502
+模型已保存，保存路径为: E:/ustc/CIFAR/model_save/model_user_medianfiltering.ckpt
+测试集准确率: 46.38%
+
+不影响模型判断的准确性
