@@ -252,5 +252,5 @@ print("测试集数据的预测概率向量结果已保存。")
 # # 每一行对应一个数据样本的预测概率向量，最后一列为标签0
 
 # # 保存测试集数据的预测概率向量结果
-# torch.save(test_predictions_tensor, 'test_predictions_with_labels_median_filter.pt')
+# torch.save(test_predictions_tensor, 'train_predictions_with_labels_median_filter.pt')
 # print("测试集数据的预测概率向量结果已保存。")
